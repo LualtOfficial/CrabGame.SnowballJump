@@ -4,11 +4,12 @@ using HarmonyLib;
 using UnityEngine;
 using Il2CppSystem;
 
-namespace snowballJump
+namespace lu_cg_snowballjump
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin("lt.lua.crabgam.snowballjump", "lu_cg_snowballjump", "1.0.0")]
     public class Plugin : BasePlugin
     {
+        public static MonoBehaviourPublicCSDi2UIInstObUIloDiUnique gamemodeManager = null;
         // equipping the snowball (slot 4, index 3) should only be allowed when done automatically by code
         public static bool canEquipSnow = false;
         public static int swap_slot_timer = 0;
@@ -19,16 +20,28 @@ namespace snowballJump
             Log.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
             Harmony.CreateAndPatchAll(typeof(Plugin));
         }
+        public static bool isPractice(){
+            if (gamemodeManager == null){
+                GameObject managers = GameObject.Find("/Managers");
+                gamemodeManager = managers.GetComponent<MonoBehaviourPublicCSDi2UIInstObUIloDiUnique>();
+            }
+            if (gamemodeManager == null){
+                return false;
+            }
+            return gamemodeManager.gameMode.modeName == "Practice";
+        }
         //                   Snowball
         [HarmonyPatch(typeof(MonoBehaviour1PublicTrtrGahiRiCoBoItVeBoUnique),"OnCollisionEnter")]
         [HarmonyPostfix]
         public static void snowball_hit_patch(MonoBehaviour1PublicTrtrGahiRiCoBoItVeBoUnique __instance, Collision param_1){
-            Collider[] exploded = UnityEngine.Physics.OverlapSphere(param_1.contacts[0].point,5f);
-            foreach (Collider c in exploded){
-                // dont apply any force to snowballs
-                if (c.GetComponent<MonoBehaviour1PublicTrtrGahiRiCoBoItVeBoUnique>() != null) continue;
-                Rigidbody r = c.GetComponent<Rigidbody>();
-                if (r != null) r.AddExplosionForce(700f,param_1.contacts[0].point,10f,0f,ForceMode.Impulse);
+            if (isPractice()) {
+                Collider[] exploded = UnityEngine.Physics.OverlapSphere(param_1.contacts[0].point,5f);
+                foreach (Collider c in exploded){
+                    // dont apply any force to snowballs
+                    if (c.GetComponent<MonoBehaviour1PublicTrtrGahiRiCoBoItVeBoUnique>() != null) continue;
+                    Rigidbody r = c.GetComponent<Rigidbody>();
+                    if (r != null) r.AddExplosionForce(700f,param_1.contacts[0].point,10f,0f,ForceMode.Impulse);
+                }
             }
         }
         //                   PlayerInventory
