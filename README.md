@@ -1,5 +1,7 @@
 fork so that the jump only works in practice lobbies, but the rebind everywhere
 
+### do not use this mod in public lobbies it gives a slight advantage since you no longer have to time when grabbing your snowballs
+
 original docs below
 ---
 
